@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import Footer from '../components/footer'
-import Navbar from '../components/navbar'
+
 
 export default function Home() {
   return (
@@ -13,7 +12,7 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <Navbar />
+      
         <img src="/bg.jpg" alt="Bg" />
 
 
@@ -98,7 +97,7 @@ export default function Home() {
           </div>
         </section>
 
-        <Footer />
+       
 
       </div>
     </>
