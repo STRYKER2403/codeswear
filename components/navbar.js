@@ -3,9 +3,10 @@ import React, { useRef } from 'react'
 import Link from 'next/link'
 import { AiFillPlusCircle, AiFillMinusCircle, AiFillCloseCircle, AiOutlineShoppingCart } from 'react-icons/ai';
 import { BsFillBagCheckFill } from 'react-icons/bs';
+import { MdAccountCircle } from 'react-icons/Md';
 
 const Navbar = ({cart,addToCart,removeFromCart,clearCart,subTotal}) => {
-console.log(cart,addToCart,removeFromCart,clearCart,subTotal)
+// console.log(cart,addToCart,removeFromCart,clearCart,subTotal)
   const toggleCart = () => {
     if (ref.current.classList.contains("translate-x-full")) {
       ref.current.classList.remove("translate-x-full")
@@ -34,7 +35,8 @@ console.log(cart,addToCart,removeFromCart,clearCart,subTotal)
           <Link href={"/mugs"}><a><li>Mugs</li></a></Link>
         </ul>
       </div>
-      <div onClick={toggleCart} className="cursor-pointer cart absolute right-0 top-6 mx-5">
+      <div onClick={toggleCart} className="flex cursor-pointer cart absolute right-0 top-6 mx-5">
+        <Link href={"/login"}><a><MdAccountCircle className='text-xl md:text-3xl mx-2'/></a></Link>
         <AiOutlineShoppingCart className='text-xl md:text-3xl' />
       </div>
 
