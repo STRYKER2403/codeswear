@@ -3,14 +3,22 @@ import { useRouter } from 'next/router'
 import Footer from '../components/footer'
 import Navbar from '../components/navbar'
 import '../styles/globals.css'
+import LoadingBar from 'react-top-loading-bar'
 
 function MyApp({ Component, pageProps }) {
 
   const router = useRouter()
+  const [progress, setProgress] = useState(0)
   const [cart, setcart] = useState({});
+  const [user, setuser] = useState({value:null});
+  const [key, setkey] = useState(0);
   const [subTotal, setsubTotal] = useState(0);
 
   useEffect(() => {
+
+    router.events.on('routeChangeStart', ()=>{setProgress(40)})
+    router.events.on('routeChangeComplete', ()=>{setProgress(100)})
+
     try {
       if (localStorage.getItem("cart")) {
         setcart(JSON.parse(localStorage.getItem("cart")))
@@ -20,7 +28,22 @@ function MyApp({ Component, pageProps }) {
          console.log(error);
          localStorage.clear();
     }
-  }, []);
+
+    const token = localStorage.getItem("token")
+    if(token)
+    {
+      setuser({value:token})
+      setkey(Math.random())
+    }
+
+  }, [router.query]);
+
+  const logout = () =>{
+    localStorage.removeItem("token")
+    setuser({value:null})
+    setkey(Math.random())
+    router.push('/')
+  }
 
   const saveCart = (myCart) => {
     localStorage.setItem("cart", JSON.stringify(myCart))
@@ -75,7 +98,15 @@ function MyApp({ Component, pageProps }) {
  }
 
   return <>
-    <Navbar cart={cart} addToCart = {addToCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal} />
+    <LoadingBar
+        color='#E91E63'
+        progress={progress}
+        waitingTime = {400}
+        onLoaderFinished={() => setProgress(0)}
+      />
+
+  {/* key={key} */}
+    <Navbar logout={logout} user={user} cart={cart} addToCart = {addToCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal} />
     <Component buyNow={buyNow} cart={cart} addToCart = {addToCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal} {...pageProps} />
     <Footer />
   </>

@@ -1,12 +1,14 @@
 import Image from 'next/image'
-import React, { useRef } from 'react'
+import React, { useRef,useState } from 'react'
 import Link from 'next/link'
 import { AiFillPlusCircle, AiFillMinusCircle, AiFillCloseCircle, AiOutlineShoppingCart } from 'react-icons/ai';
 import { BsFillBagCheckFill } from 'react-icons/bs';
 import { MdAccountCircle } from 'react-icons/Md';
 
-const Navbar = ({cart,addToCart,removeFromCart,clearCart,subTotal}) => {
+const Navbar = ({logout,user,cart,addToCart,removeFromCart,clearCart,subTotal}) => {
 // console.log(cart,addToCart,removeFromCart,clearCart,subTotal)
+const [dropdown, setdropdown] = useState(false);
+
   const toggleCart = () => {
     if (ref.current.classList.contains("translate-x-full")) {
       ref.current.classList.remove("translate-x-full")
@@ -23,11 +25,11 @@ const Navbar = ({cart,addToCart,removeFromCart,clearCart,subTotal}) => {
   return (
     <div className='flex flex-col md:flex-row md:justify-start justify-center items-center shadow-md sticky top-0 z-10 bg-white'>
 
-      <div className='logo mx-2 md:mt-2'>
-        <Link href={"/"}><a><Image src='/logo.png' alt='lg' width={230} height={60} /></a></Link>
+      <div className='mr-auto logo  md:mt-2 md:mx-2'>
+        <Link href={"/"}><a><Image src='/logo.png' alt='lg' width={230} height={55} /></a></Link>
       </div>
 
-      <div className='nav mb-1.5'>
+      <div className='nav md:mb-0 mb-1.5'>
         <ul className='flex space-x-2 font-bold md:text-md'>
           <Link href={"/tshirts"}><a><li className='hover:text-pink-600'>Tshirts</li></a></Link>
           <Link href={"/hoodies"}><a><li className='hover:text-pink-600'>Hoodies</li></a></Link>
@@ -35,10 +37,24 @@ const Navbar = ({cart,addToCart,removeFromCart,clearCart,subTotal}) => {
           <Link href={"/mugs"}><a><li className='hover:text-pink-600'>Mugs</li></a></Link>
         </ul>
       </div>
-      <div  className="flex cursor-pointer cart absolute right-0 top-6 mx-5">
-        <Link href={"/login"}><a><MdAccountCircle className='text-xl md:text-3xl mx-2'/></a></Link>
+      <div  className="flex cursor-pointer cart absolute right-0 top-3.5 md:top-5 mx-5 items-center">
+     
+      {dropdown && <div onMouseOver={()=>setdropdown(true)} onMouseLeave={()=>setdropdown(false)} className='absolute right-8 bg-white shadow-lg border md:top-8 top-5 rounded-md px-5 w-32 py-4'>
+        <ul>
+          <Link href={"/myaccount"}><a><li className='py-1 text-sm font-bold hover:text-pink-700'>My Account</li></a></Link>
+          <Link href={"/orders"}><a><li className='py-1 text-sm font-bold hover:text-pink-700'>Orders</li></a></Link>
+          <li onClick={logout} className='py-1 text-sm font-bold hover:text-pink-700'>Logout</li>
+        </ul>
+      </div>}
+
+        {user.value && <MdAccountCircle onMouseOver={()=>setdropdown(true)} onMouseLeave={()=>setdropdown(false)} className='text-xl md:text-3xl mx-2'/>}
+
+        {!user.value && <Link href={"/login"}><a><button className=" text-white text-sm bg-pink-500 border-0 mx-2 px-2 py-1.5 md:py-2 focus:outline-none hover:bg-pink-600 rounded ">Login</button></a></Link>}
+
         <AiOutlineShoppingCart onClick={toggleCart} className='text-xl md:text-3xl' />
       </div>
+
+      
 
       <div ref={ref} className="z-10 w-72 h-screen sideCart overflow-y-scroll absolute top-0 right-0 bg-pink-100 px-8 py-10 transform transition-transform translate-x-full">
         <h2 className='font-bold text-xl text-center'>Shopping Cart</h2>
