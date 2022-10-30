@@ -35,9 +35,9 @@ const Navbar = ({cart,addToCart,removeFromCart,clearCart,subTotal}) => {
           <Link href={"/mugs"}><a><li className='hover:text-pink-600'>Mugs</li></a></Link>
         </ul>
       </div>
-      <div onClick={toggleCart} className="flex cursor-pointer cart absolute right-0 top-6 mx-5">
+      <div  className="flex cursor-pointer cart absolute right-0 top-6 mx-5">
         <Link href={"/login"}><a><MdAccountCircle className='text-xl md:text-3xl mx-2'/></a></Link>
-        <AiOutlineShoppingCart className='text-xl md:text-3xl' />
+        <AiOutlineShoppingCart onClick={toggleCart} className='text-xl md:text-3xl' />
       </div>
 
       <div ref={ref} className="z-10 w-72 h-screen sideCart overflow-y-scroll absolute top-0 right-0 bg-pink-100 px-8 py-10 transform transition-transform translate-x-full">
