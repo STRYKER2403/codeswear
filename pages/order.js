@@ -16,8 +16,8 @@ const MyOrder = ({order}) => {
       <div className="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
         <h2 className="text-sm title-font text-gray-500 tracking-widest">CODESWEAR.COM</h2>
         <h1 className="text-gray-900 text-xl md:text-3xl title-font font-medium mb-4">Order Id: #{order.orderId}</h1>
-        <p className="leading-relaxed mb-4">Yayy! Your order has been successfully placed!
-        <p> Your Payment Status is : <span className='font-semibold text-slate-700'>{order.status}</span></p></p>
+        <div className="leading-relaxed mb-4">Yayy! Your order has been successfully placed!
+        <div> Your Payment Status is : <span className='font-semibold text-slate-700'>{order.status}</span></div></div>
         <div className="flex mb-4">
           <a className="flex-grow  py-2 text-lg px-1">Item Description</a>
           <a className="flex-grow  py-2 text-lg px-1 text-right">Quantity</a>
