@@ -1,17 +1,25 @@
 const mongoose  = require("mongoose");
 
 const OrderSchema = new mongoose.Schema({
-    userId: {
+    email: {
+        type:String,
+        required:true
+    },
+    
+    orderId: {
         type:String,
         required:true
     },
 
-    products:[
-        {
-            productId: {type:String},
-            quantity: {type:Number , default:1}
-        }
-    ],
+    paymentInfo: {
+        type:String,
+        default:""
+    },
+
+    products:{
+        type:Object,
+        required:true
+    },
 
     address:{
         type:String,
@@ -25,7 +33,7 @@ const OrderSchema = new mongoose.Schema({
 
     status:{
         type:String,
-        default:"Pending",
+        default:"Initiated",
         required:true
     }
   },{timeStamps:true});

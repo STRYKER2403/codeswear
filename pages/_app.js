@@ -32,9 +32,9 @@ function MyApp({ Component, pageProps }) {
     const token = localStorage.getItem("token")
     if(token)
     {
-      setuser({value:token})
-      setkey(Math.random())
+      setuser({value:token})    
     }
+    setkey(Math.random())
 
   }, [router.query]);
 

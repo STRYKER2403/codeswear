@@ -23,7 +23,7 @@ const [dropdown, setdropdown] = useState(false);
   const ref = useRef();
 
   return (
-    <div className='flex flex-col md:flex-row md:justify-start justify-center items-center shadow-md sticky top-0 z-10 bg-white'>
+    <div className='flex flex-col md:flex-row md:justify-start justify-center items-center shadow-md sticky top-0 z-50 bg-white'>
 
       <div className='mr-auto logo  md:mt-2 md:mx-2'>
         <Link href={"/"}><a><Image src='/logo.png' alt='lg' width={230} height={55} /></a></Link>
@@ -38,8 +38,8 @@ const [dropdown, setdropdown] = useState(false);
         </ul>
       </div>
       <div  className="flex cursor-pointer cart absolute right-0 top-3.5 md:top-5 mx-5 items-center">
-     
-      {dropdown && <div onMouseOver={()=>setdropdown(true)} onMouseLeave={()=>setdropdown(false)} className='absolute right-8 bg-white shadow-lg border md:top-8 top-5 rounded-md px-5 w-32 py-4'>
+      <span onMouseOver={()=>setdropdown(true)} onMouseLeave={()=>setdropdown(false)}>
+      {dropdown && <div  className='absolute right-8 bg-white shadow-lg border md:top-8 top-5 rounded-md px-5 w-32 py-4'>
         <ul>
           <Link href={"/myaccount"}><a><li className='py-1 text-sm font-bold hover:text-pink-700'>My Account</li></a></Link>
           <Link href={"/orders"}><a><li className='py-1 text-sm font-bold hover:text-pink-700'>Orders</li></a></Link>
@@ -47,7 +47,7 @@ const [dropdown, setdropdown] = useState(false);
         </ul>
       </div>}
 
-        {user.value && <MdAccountCircle onMouseOver={()=>setdropdown(true)} onMouseLeave={()=>setdropdown(false)} className='text-xl md:text-3xl mx-2'/>}
+        {user.value && <MdAccountCircle className='text-xl md:text-3xl mx-2'/>}</span>
 
         {!user.value && <Link href={"/login"}><a><button className=" text-white text-sm bg-pink-500 border-0 mx-2 px-2 py-1.5 md:py-2 focus:outline-none hover:bg-pink-600 rounded ">Login</button></a></Link>}
 
