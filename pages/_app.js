@@ -29,17 +29,17 @@ function MyApp({ Component, pageProps }) {
          localStorage.clear();
     }
 
-    const token = localStorage.getItem("token")
-    if(token)
+    const myuser = JSON.parse(localStorage.getItem("myuser"))
+    if(myuser)
     {
-      setuser({value:token})    
+      setuser({value: myuser.token ,email: myuser.email})    
     }
     setkey(Math.random())
 
   }, [router.query]);
 
   const logout = () =>{
-    localStorage.removeItem("token")
+    localStorage.removeItem("myuser")
     setuser({value:null})
     setkey(Math.random())
     router.push('/')

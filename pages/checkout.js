@@ -1,10 +1,12 @@
 import Link from 'next/link';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiFillPlusCircle, AiFillMinusCircle } from 'react-icons/ai';
 import Head from 'next/head';
 import Script from 'next/script';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Checkout = ({ cart, addToCart, removeFromCart, subTotal }) => {
+const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
 
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
@@ -13,10 +15,21 @@ const Checkout = ({ cart, addToCart, removeFromCart, subTotal }) => {
   const [pincode, setpincode] = useState("");
   const [city, setcity] = useState("");
   const [state, setstate] = useState("");
-
   const [disabled, setdisabled] = useState(true);
+  const [user, setuser] = useState({value:null});
 
-  const handleChange = (e) => {
+  useEffect(() => {
+  
+    const user = JSON.parse(localStorage.getItem("myuser"))
+    if(user.token)
+    {
+      setuser(user)
+      setemail(user.email)    
+    }
+  
+  }, []);
+
+  const handleChange = async (e) => {
     if (e.target.name == "name") {
       setname(e.target.value)
     }
@@ -31,16 +44,33 @@ const Checkout = ({ cart, addToCart, removeFromCart, subTotal }) => {
     }
     else if (e.target.name == "pincode") {
       setpincode(e.target.value)
+      if (e.target.value.length == 6) {
+
+        let pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`)
+        let pinJson = await pins.json();
+        if (Object.keys(pinJson).includes(e.target.value)) {
+          setstate(pinJson[e.target.value][1])
+          setcity(pinJson[e.target.value][0])
+        }
+        else {
+          setstate('');
+          setcity('');
+        }
+      }
+      else {
+        setstate('');
+        setcity('');
+      }
     }
 
     setTimeout(() => {
-    if (name.length>3 && email.length>3 && phone.length>3 && address.length>3 && pincode.length>3) {
-      setdisabled(false);
-    }
-    else
-    {
-      setdisabled(true)
-    }},100);
+      if (name.length > 3 && email.length > 3 && phone.length > 3 && address.length > 3 && pincode.length > 3) {
+        setdisabled(false);
+      }
+      else {
+        setdisabled(true)
+      }
+    }, 100);
 
   }
 
@@ -51,7 +81,7 @@ const Checkout = ({ cart, addToCart, removeFromCart, subTotal }) => {
 
     // Get a transaction token
     // const data = { cart, subTotal, oid, cid };
-    const data = { cart, subTotal, oid, email:email,name,address,pincode,phone};
+    const data = { cart, subTotal, oid, email: email, name, address, pincode, phone };
 
     let a = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pretransaction`, {
       method: 'POST', // or 'PUT'
@@ -62,39 +92,72 @@ const Checkout = ({ cart, addToCart, removeFromCart, subTotal }) => {
     })
 
     let txnRes = await a.json();
-    console.log(txnRes)
-    let txnToken = txnRes.txnToken
+    // console.log(txnRes)
+    if (txnRes.success) {
+      
+      let txnToken = txnRes.txnToken
 
-    var config = {
-      "root": "",
-      "flow": "DEFAULT",
-      "data": {
-        "orderId": oid, /* update order id */
-        "token": txnToken, /* update token value */
-        "tokenType": "TXN_TOKEN",
-        "amount": subTotal /* update amount */
-      },
-      "handler": {
-        "notifyMerchant": function (eventName, data) {
-          console.log("notifyMerchant handler function called");
-          console.log("eventName => ", eventName);
-          console.log("data => ", data);
+      var config = {
+        "root": "",
+        "flow": "DEFAULT",
+        "data": {
+          "orderId": oid, /* update order id */
+          "token": txnToken, /* update token value */
+          "tokenType": "TXN_TOKEN",
+          "amount": subTotal /* update amount */
+        },
+        "handler": {
+          "notifyMerchant": function (eventName, data) {
+            console.log("notifyMerchant handler function called");
+            console.log("eventName => ", eventName);
+            console.log("data => ", data);
+          }
         }
-      }
-    };
+      };
 
-    // initialze configuration using init method
-    window.Paytm.CheckoutJS.init(config).then(function onSuccess() {
-      // after successfully updating configuration, invoke JS Checkout
-      window.Paytm.CheckoutJS.invoke();
-    }).catch(function onError(error) {
-      console.log("error => ", error);
-    });
+      // initialze configuration using init method
+
+      window.Paytm.CheckoutJS.init(config).then(function onSuccess() {
+        // after successfully updating configuration, invoke JS Checkout
+        window.Paytm.CheckoutJS.invoke();
+      }).catch(function onError(error) {
+        console.log("error => ", error);
+      });
+
+    }
+    else {
+      console.log(txnRes.error)
+      clearCart();
+      toast.error(txnRes.error, {
+        position: "top-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
+    }
 
   }
 
   return (
     <div className='container m-auto'>
+
+      <ToastContainer
+        position="top-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+
       <Head>
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0" />
       </Head>
@@ -114,8 +177,10 @@ const Checkout = ({ cart, addToCart, removeFromCart, subTotal }) => {
 
           <div className='px-2 w-1/2'>
             <div className="mb-4">
+              
               <label htmlFor="email" className="leading-7 text-sm text-gray-600">Email</label>
-              <input onChange={handleChange} value={email} type="email" id="email" name="email" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+              {user && user.value? <input value={email} type="email" id="email" name="email" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly/> : <input onChange={handleChange} value={email} type="email" id="email" name="email" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" /> }
+
             </div>
           </div>
 
@@ -131,15 +196,15 @@ const Checkout = ({ cart, addToCart, removeFromCart, subTotal }) => {
         <div className='mx-auto flex my-2'>
           <div className='px-2 w-1/2'>
             <div className="mb-4">
-              <label htmlFor="phone" className="leading-7 text-sm text-gray-600">Phone</label>
-              <input onChange={handleChange} value={phone} type="phone" id="phone" name="phone" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+              <label htmlFor="phone" className="leading-7 text-sm text-gray-600">Phone Number</label>
+              <input placeholder='Your 10-digit Phone Number' onChange={handleChange} value={phone} type="phone" id="phone" name="phone" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
             </div>
           </div>
 
           <div className='px-2 w-1/2'>
             <div className="mb-4">
-            <label htmlFor="pincode" className="leading-7 text-sm text-gray-600">Pincode</label>
-              <input onChange={handleChange} value={pincode} type="text" id="pincode" name="pincode" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />             
+              <label htmlFor="pincode" className="leading-7 text-sm text-gray-600">Pincode</label>
+              <input onChange={handleChange} value={pincode} type="text" id="pincode" name="pincode" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
             </div>
           </div>
         </div>
@@ -147,16 +212,18 @@ const Checkout = ({ cart, addToCart, removeFromCart, subTotal }) => {
         <div className='mx-auto flex my-2'>
           <div className='px-2 w-1/2'>
             <div className="mb-4">
-            <label htmlFor="city" className="leading-7 text-sm text-gray-600">City</label>
-              <input value={state} type="text" id="city" name="city" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly={true} />
-              
+              <label htmlFor="city" className="leading-7 text-sm text-gray-600">District</label>
+              {/* onChange={handleChange} in main */}
+              <input value={city} type="text" id="city" name="city" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly={true} />
+
             </div>
           </div>
 
           <div className='px-2 w-1/2'>
             <div className="mb-4">
-            <label htmlFor="state" className="leading-7 text-sm text-gray-600">State</label>
-              <input value={city} type="text" id="state" name="state" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly={true} />
+              <label htmlFor="state" className="leading-7 text-sm text-gray-600">State</label>
+              {/* onChange={handleChange} in main */}
+              <input value={state} type="text" id="state" name="state" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly={true} />
             </div>
           </div>
 

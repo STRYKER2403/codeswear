@@ -7,7 +7,7 @@ const Myaccount = () => {
 
   useEffect(() => {
 
-    if (!localStorage.getItem("token")) {
+    if (!localStorage.getItem("myuser")) {
       router.push("/")
     }
   }, [router.query]);

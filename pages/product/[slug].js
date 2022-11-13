@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Product from '../../models/Product';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,12 +13,20 @@ const Slug = ({ buyNow, addToCart, product, variants }) => {
   const [pin, setpin] = useState();
   const [service, setservice] = useState();
 
+  const [color, setcolor] = useState(product.color);
+  const [size, setsize] = useState(product.size);
 
+  useEffect(() => {
+    
+    setcolor(product.color)
+    setsize(product.size)
+    
+  }, [router.query]);
 
   const checkServiceability = async () => { 
     let pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`)
     let pinJson = await pins.json();
-    if (pinJson.includes(parseInt(pin))) {
+    if (Object.keys(pinJson).includes(pin)) {
       setservice(true)
       toast.success('Your Pincode is Serviceable!', {
         position: "bottom-center",
@@ -50,12 +58,11 @@ const Slug = ({ buyNow, addToCart, product, variants }) => {
     setpin(e.target.value);
   }
 
-  const [color, setcolor] = useState(product.color);
-  const [size, setsize] = useState(product.size);
+
 
   const refreshVariant = (newsize, newcolor) => {
     let url = `${process.env.NEXT_PUBLIC_HOST}/product/${variants[newcolor][newsize]['slug']}`
-    window.location = url;
+    router.push(url);
   }
 
 
