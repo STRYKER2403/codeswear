@@ -39,11 +39,11 @@ useEffect(() => {
 
   return (
     <>
-    {!sidebar && <span onMouseOver={()=>setdropdown(true)} onMouseLeave={()=>setdropdown(false)} className='absolute md:right-12 right-10 md:top-5 top-3.5 z-30 cursor-pointer'>
+    {!sidebar && <span onMouseOver={()=>setdropdown(true)} onMouseLeave={()=>setdropdown(false)} className='fixed md:right-12 right-10 md:top-5 top-3.5 z-30 cursor-pointer'>
       {dropdown && <div className='absolute right-4 bg-white shadow-lg border md:top-7 top-5 rounded-md px-5 w-32 py-4'>
         <ul>
           <Link href={"/myaccount"}><a><li className='py-1 text-sm font-bold hover:text-pink-700'>My Account</li></a></Link>
-          <Link href={"/orders"}><a><li className='py-1 text-sm font-bold hover:text-pink-700'>Orders</li></a></Link>
+          <Link href={"/orders"}><a><li className='py-1 text-sm font-bold hover:text-pink-700'>My Orders</li></a></Link>
           <li onClick={logout} className='py-1 text-sm font-bold hover:text-pink-700'>Logout</li>
         </ul>
       </div>}

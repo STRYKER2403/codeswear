@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 const mongoose = require("mongoose");
 import Order from '../models/Order';
 
@@ -7,9 +7,11 @@ import Order from '../models/Order';
 const MyOrder = ({clearCart,order}) => {
   const products = order.products;
   const router = useRouter();
+  const [date, setdate] = useState();
 
-  useEffect(() => {
-    
+  useEffect(() => {     
+    const d  = new Date(order.createdAt)
+    setdate(d)
      if(router.query.clearCart == 1){
       clearCart();
      }
@@ -24,8 +26,9 @@ const MyOrder = ({clearCart,order}) => {
       <div className="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
         <h2 className="text-sm title-font text-gray-500 tracking-widest">CODESWEAR.COM</h2>
         <h1 className="text-gray-900 text-xl md:text-3xl title-font font-medium mb-4">Order Id: #{order.orderId}</h1>
-        <div className="leading-relaxed mb-4">Yayy! Your order has been successfully placed!
-        <div> Your Payment Status is : <span className='font-semibold text-slate-700'>{order.status}</span></div></div>
+        <p className="leading-relaxed mb-2">Yayy! Your order has been successfully placed!</p>
+        <p className="leading-relaxed mb-2">Order placed on : {date && date.toLocaleString("en-IN",{ weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p> Your Payment Status is : <span className='font-semibold text-slate-700'>{order.status}</span></p>
         <div className="flex mb-4">
           <a className="flex-grow  py-2 text-lg px-1">Item Description</a>
           <a className="flex-grow  py-2 text-lg px-1 text-right">Quantity</a>
@@ -35,7 +38,7 @@ const MyOrder = ({clearCart,order}) => {
         {Object.keys(products).map((item)=>{ return <div key={item} className="flex border-t border-gray-200 py-2">
           <span className="text-gray-500">{products[item].name}({products[item].size}/{products[item].variant})</span>
           <span className="ml-auto text-gray-900">{products[item].qty}</span>
-          <span className="ml-auto text-gray-900">₹{products[item].price}</span>
+          <span className="ml-auto text-gray-900">₹{products[item].price} X {products[item].qty} = ₹{products[item].price * products[item].qty}</span>
         </div>})}
         
         <div className="flex">

@@ -20,14 +20,57 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
 
   useEffect(() => {
   
-    const user = JSON.parse(localStorage.getItem("myuser"))
-    if(user.token)
+    const myuser = JSON.parse(localStorage.getItem("myuser"))
+    if(myuser && myuser.token)
     {
-      setuser(user)
-      setemail(user.email)    
+      setuser(myuser)
+      setemail(myuser.email)    
+      fetchData(myuser.token)
     }
   
   }, []);
+
+  useEffect(() => {
+    if (name.length > 3 && email.length > 3 && phone.length > 3 && address.length > 3 && pincode.length > 3) {
+      setdisabled(false);
+    }
+    else {
+      setdisabled(true)
+    }
+
+  }, [name,email,phone,pincode,address]);
+
+  const fetchData = async (token) => {
+    let data = { token: token }
+    let a = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getuser`, {
+      method: 'POST', // or 'PUT'
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    let res = await a.json();
+    console.log(res)
+    setname(res.name)
+    setaddress(res.address)
+    setpincode(res.pincode)
+    setphone(res.phone)
+    getPincode(res.pincode)
+  }
+
+  const getPincode = async(pin) =>{
+    let pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`)
+    let pinJson = await pins.json();
+    if (Object.keys(pinJson).includes(pin)) {
+      setstate(pinJson[pin][1])
+      setcity(pinJson[pin][0])
+    }
+    else {
+      setstate('');
+      setcity('');
+    }
+  }
 
   const handleChange = async (e) => {
     if (e.target.name == "name") {
@@ -46,31 +89,13 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
       setpincode(e.target.value)
       if (e.target.value.length == 6) {
 
-        let pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`)
-        let pinJson = await pins.json();
-        if (Object.keys(pinJson).includes(e.target.value)) {
-          setstate(pinJson[e.target.value][1])
-          setcity(pinJson[e.target.value][0])
-        }
-        else {
-          setstate('');
-          setcity('');
-        }
+        getPincode(e.target.value);
       }
       else {
         setstate('');
         setcity('');
       }
     }
-
-    setTimeout(() => {
-      if (name.length > 3 && email.length > 3 && phone.length > 3 && address.length > 3 && pincode.length > 3) {
-        setdisabled(false);
-      }
-      else {
-        setdisabled(true)
-      }
-    }, 100);
 
   }
 
@@ -126,8 +151,11 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
 
     }
     else {
-      console.log(txnRes.error)
-      clearCart();
+      
+      if(txnRes.cartClear){
+        clearCart();
+      }
+      
       toast.error(txnRes.error, {
         position: "top-left",
         autoClose: 5000,
@@ -179,7 +207,7 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
             <div className="mb-4">
               
               <label htmlFor="email" className="leading-7 text-sm text-gray-600">Email</label>
-              {user && user.value? <input value={email} type="email" id="email" name="email" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly/> : <input onChange={handleChange} value={email} type="email" id="email" name="email" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" /> }
+              {user && user.token? <input value={email} type="email" id="email" name="email" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" readOnly/> : <input onChange={handleChange} value={email} type="email" id="email" name="email" className="w-full bg-white rounded border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" /> }
 
             </div>
           </div>
@@ -228,6 +256,7 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
           </div>
 
         </div>
+        
 
 
         <h2 className='font-semibold text-xl '>2. Review Cart Items</h2>
@@ -250,7 +279,7 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
         </div>
 
         <div className="mx-1">
-          {/* href={"/order"} */}
+
           <Link href={"/checkout"}><button disabled={disabled} onClick={initiatePayment} className="disabled:bg-pink-300 flex mr-2 text-white bg-pink-500 border-0 py-1.5 px-2 focus:outline-none hover:bg-pink-600 rounded text-sm">Pay ₹{subTotal}</button></Link>
         </div>
       </div>

@@ -45,7 +45,7 @@ const ProductSchema = new mongoose.Schema({
         required:true
     }
     
-  },{timeStamps:true});
+  },{timestamps:true});
 
 // mongoose.model = {}
 // if model exist use it else create it

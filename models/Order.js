@@ -26,6 +26,36 @@ const OrderSchema = new mongoose.Schema({
         required:true
     },
 
+    city:{
+        type:String,
+        required:true
+    },
+
+    state:{
+        type:String,
+        required:true
+    },
+
+    pincode:{
+        type:String,
+        required:true
+    },
+
+    phone:{
+        type:String,
+        required:true
+    },
+
+    name:{
+        type:String,
+        required:true
+    },
+
+    transactionid:{
+        type:String,
+        default:""
+    },
+
     amount:{
         type:Number,
         required:true
@@ -42,7 +72,8 @@ const OrderSchema = new mongoose.Schema({
         default:"unshipped",
         required:true
     }
-  },{timeStamps:true});
+
+  },{timestamps:true});
 
 // mongoose.model = {}  
 // if model exist use it else create it

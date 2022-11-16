@@ -15,9 +15,24 @@ const UserSchema = new mongoose.Schema({
     password: {
         type:String,
         required:true
+    },
+
+    address: {
+        type:String,
+        default:""
+    },
+
+    phone: {
+        type:String,
+        default:""
+    },
+
+    pincode: {
+        type:String,
+        default:""
     }
     
-  },{timeStamps:true});
+  },{timestamps:true});
 
 // mongoose.model = {}
 // if model exist use it else create it

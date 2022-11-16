@@ -58,6 +58,10 @@ function MyApp({ Component, pageProps }) {
   }
 
   const addToCart = (ItemCode, qty, price, name, size, variant) => {
+    if(Object.keys(cart).length == 0)
+    {
+      setkey(Math.random())
+    }
     let newCart = cart;
     if (ItemCode in cart) {
       newCart[ItemCode].qty = cart[ItemCode].qty + qty
@@ -105,8 +109,8 @@ function MyApp({ Component, pageProps }) {
         onLoaderFinished={() => setProgress(0)}
       />
 
-  {/* key={key} */}
-    <Navbar logout={logout} user={user} cart={cart} addToCart = {addToCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal} />
+  
+    {key && <Navbar key={key} logout={logout} user={user} cart={cart} addToCart = {addToCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal} />}
     <Component buyNow={buyNow} cart={cart} addToCart = {addToCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal} {...pageProps} />
     <Footer />
   </>
