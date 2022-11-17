@@ -102,7 +102,7 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
   const initiatePayment = async () => {
 
     let oid = Math.floor(Math.random() * Date.now());
-    let cid = "CUST_" + Math.floor(Math.random() * Date.now())
+    
 
     // Get a transaction token
     // const data = { cart, subTotal, oid, cid };
@@ -171,7 +171,7 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
   }
 
   return (
-    <div className='container m-auto'>
+    <div className='container m-auto min-h-screen'>
 
       <ToastContainer
         position="top-left"
@@ -187,6 +187,7 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
       />
 
       <Head>
+        <title>Checkout - Codeswear.com</title>
         <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0" />
       </Head>
 

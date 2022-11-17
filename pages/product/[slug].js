@@ -71,7 +71,7 @@ const Slug = ({ buyNow, addToCart, product, variants,error}) => {
   }
 
   return <>
-    <section className="text-gray-600 body-font overflow-hidden">
+    <section className="text-gray-600 body-font overflow-hidden min-h-screen">
       <ToastContainer
         position="bottom-center"
         autoClose={1000}

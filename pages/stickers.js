@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const Stickers = ({ products }) => {
   return (
     <div>
-      <section className="text-gray-600 body-font">
+      <section className="text-gray-600 body-font min-h-screen">
         <div className="container px-5 py-24 mx-auto">
           <div className="flex flex-wrap justify-center">
             {Object.keys(products).length === 0 && <p>Sorry! All The stickers are Currently Out Of Stock!! New stock Coming soon. Stay Tuned!</p>}

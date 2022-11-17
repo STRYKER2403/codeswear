@@ -160,7 +160,7 @@ const Myaccount = () => {
         pauseOnHover
         theme="light"
       />
-      <h1 className='font-bold text-3xl text-center'>Update your Account</h1>
+      <h1 className='font-bold text-3xl text-center mb-10 md:mb-5'>Update your Account</h1>
 
       <div className='mx-4 md:mx-20'>
         <h2 className='font-semibold text-xl '>1. Delivery Details</h2>
