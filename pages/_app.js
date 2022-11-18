@@ -108,8 +108,7 @@ function MyApp({ Component, pageProps }) {
         waitingTime = {400}
         onLoaderFinished={() => setProgress(0)}
       />
-
-  
+      
     {key && <Navbar key={key} logout={logout} user={user} cart={cart} addToCart = {addToCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal} />}
     <Component buyNow={buyNow} cart={cart} addToCart = {addToCart} removeFromCart={removeFromCart} clearCart={clearCart} subTotal={subTotal} {...pageProps} />
     <Footer />
