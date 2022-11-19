@@ -106,7 +106,7 @@ const Checkout = ({ cart, clearCart, addToCart, removeFromCart, subTotal }) => {
 
     // Get a transaction token
     // const data = { cart, subTotal, oid, cid };
-    const data = { cart, subTotal, oid, email: email, name, address, pincode, phone };
+    const data = { cart, subTotal, oid, email: email, name, address, pincode, phone,city,state };
 
     let a = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pretransaction`, {
       method: 'POST', // or 'PUT'

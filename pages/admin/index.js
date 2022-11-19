@@ -2,12 +2,14 @@ import { Grid } from "@mui/material";
 import BlogCard from "../../src/components/dashboard/BlogCard";
 import SalesOverview from "../../src/components/dashboard/SalesOverview";
 import DailyActivity from "../../src/components/dashboard/DailyActivity";
-import ProductPerfomance from "../../src/components/dashboard/ProductPerfomance";
 import FullLayout from "../../src/layouts/FullLayout";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../src/theme/theme";
+import AllProducts from "../../src/components/dashboard/AllProducts";
+import Product from '../../models/Product';
+const mongoose = require("mongoose");
 
-export default function Index() {
+export default function Index({products}) {
   return (
     <ThemeProvider theme={theme}>
 
@@ -27,7 +29,7 @@ export default function Index() {
         <DailyActivity />
       </Grid>
       <Grid item xs={12} lg={8}>
-        <ProductPerfomance />
+        <AllProducts products={products} />
       </Grid>
       <Grid item xs={12} lg={12}>
         <BlogCard />
@@ -36,4 +38,17 @@ export default function Index() {
     </FullLayout>
     </ThemeProvider>
   );
+}
+
+export async function getServerSideProps(context){
+
+  if (!mongoose.connections[0].readyState) {
+    await mongoose.connect(process.env.MONGO_URI);
+  }
+
+  let products = await Product.find({})
+  
+  return {
+    props: { products: JSON.parse(JSON.stringify(products))}
+  }
 }
